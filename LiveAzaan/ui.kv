@@ -1,0 +1,194 @@
+#:kivy 2.2.0
+
+<LoginScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: "Live Azaan - Login"
+            size_hint_y: None
+            height: dp(40)
+        TextInput:
+            id: login_email
+            hint_text: "Email"
+            multiline: False
+        TextInput:
+            id: login_password
+            hint_text: "Password"
+            password: True
+            multiline: False
+        Button:
+            text: "Login"
+            on_release: app.do_login(login_email.text, login_password.text)
+        Button:
+            text: "Create account"
+            on_release: app.root.current = "register"
+        Label:
+            text: root.status_text
+
+<RegisterScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: "Register"
+        TextInput:
+            id: register_email
+            hint_text: "Email"
+            multiline: False
+        TextInput:
+            id: register_password
+            hint_text: "Password"
+            password: True
+            multiline: False
+        Button:
+            text: "Register"
+            on_release: app.do_register(register_email.text, register_password.text)
+        Button:
+            text: "Back"
+            on_release: app.root.current = "login"
+        Label:
+            text: root.status_text
+
+<DashboardScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: "Welcome: " + root.user_email
+        Label:
+            text: "Role: " + root.mode_text
+        BoxLayout:
+            size_hint_y: None
+            height: dp(42)
+            spacing: dp(8)
+            Button:
+                text: "Maulvi"
+                on_release: app.set_role("maulvi")
+            Button:
+                text: "Listener"
+                on_release: app.set_role("listener")
+        Button:
+            text: "Masjid List"
+            on_release: app.root.current = "masjid_list"
+        Button:
+            text: "Live Azaan"
+            on_release: app.root.current = "live_azaan"
+        Button:
+            text: "Settings"
+            on_release: app.root.current = "settings"
+        Button:
+            text: "Logout"
+            on_release: app.auth.logout() if app.auth else None; app.root.current = "login"
+
+<MasjidListScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: "Masjid Management"
+        TextInput:
+            id: masjid_id
+            hint_text: "Masjid ID"
+            multiline: False
+        TextInput:
+            id: masjid_name
+            hint_text: "Masjid Name"
+            multiline: False
+        BoxLayout:
+            size_hint_y: None
+            height: dp(42)
+            spacing: dp(8)
+            Button:
+                text: "Create"
+                on_release: app.create_masjid(masjid_id.text, masjid_name.text)
+            Button:
+                text: "Join"
+                on_release: app.join_masjid(masjid_id.text)
+            Button:
+                text: "Refresh"
+                on_release: app.load_masjids()
+        ScrollView:
+            Label:
+                text: root.masjid_data
+                text_size: self.width, None
+                size_hint_y: None
+                height: self.texture_size[1]
+                valign: "top"
+        Label:
+            text: root.status_text
+        Button:
+            text: "Back"
+            size_hint_y: None
+            height: dp(44)
+            on_release: app.root.current = "dashboard"
+
+<LiveAzaanScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: "Live Azaan"
+        Label:
+            text: "Status: " + root.stream_status
+        TextInput:
+            id: live_masjid_id
+            hint_text: "Masjid ID (for live status)"
+            multiline: False
+        TextInput:
+            id: server_host
+            hint_text: "Stream Host"
+            text: "127.0.0.1"
+            multiline: False
+        TextInput:
+            id: server_port
+            hint_text: "Stream Port"
+            text: "9443"
+            multiline: False
+        Button:
+            text: "Start Azaan (Maulvi)"
+            on_release: app.start_azaan(server_host.text, server_port.text, live_masjid_id.text)
+        Button:
+            text: "Stop Azaan"
+            on_release: app.stop_azaan(live_masjid_id.text)
+        Button:
+            text: "Listen Live (User)"
+            on_release: app.listen_live(server_host.text, server_port.text)
+        Button:
+            text: "Stop Listening"
+            on_release: app.stop_listen()
+        Button:
+            text: "Play Offline Azaan"
+            on_release: app.play_offline("fajr")
+        Button:
+            text: "Back"
+            on_release: app.root.current = "dashboard"
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(16)
+        spacing: dp(10)
+        Label:
+            text: "Masjid Priority"
+        TextInput:
+            id: pr_masjid
+            hint_text: "Masjid ID"
+            multiline: False
+        TextInput:
+            id: pr_value
+            hint_text: "Priority (1 is highest)"
+            multiline: False
+        Button:
+            text: "Save Priority"
+            on_release: app.set_priority(pr_masjid.text, pr_value.text)
+        Label:
+            text: root.status_text
+        Button:
+            text: "Back"
+            on_release: app.root.current = "dashboard"
